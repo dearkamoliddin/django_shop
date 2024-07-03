@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from shop.models import Product, Category
+from django.shortcuts import render, redirect
+from shop.models import Product, Category, Comment, Order
+from shop.forms import CommentModelForm, OrderModelForm
 
 
 def index(request, category_slug=None):
@@ -24,15 +25,33 @@ def index(request, category_slug=None):
 
 def product_details(request, slug):
     product = Product.objects.get(slug=slug)
-    related_products = Product.objects.filter(category=product.category).exclude(slug=product.slug)
+    related_product = Product.objects.filter(category=product.category).exclude(slug=product.slug)
+    comment_list = Comment.objects.filter(product__slug=slug)[:3]
+    commentForm = CommentModelForm()
+    orderForm = OrderModelForm()
+    new_comment = None
+    new_order = None
+    if request.method == 'POST':
+        commentForm = CommentModelForm(data=request.POST)
+        orderForm = OrderModelForm(data=request.POST)
+        if commentForm.is_valid():
+            new_comment = commentForm.save(commit=False)
+            new_comment.product = product
+            new_comment.save()
+        elif orderForm.is_valid():
+            new_order = orderForm.save(commit=False)
+            new_order.product = product
+            new_order.save()
+
     context = {
         'product': product,
-        'related_products': related_products,
+        'related_product': related_product,
+        'commentForm': commentForm,
+        'comment_list': comment_list,
+        'orderForm': orderForm,
+        'new_comment': new_comment,
+        'new_order': new_order
+
     }
     return render(request, 'shop/detail.html', context)
-
-
-
-
-
 

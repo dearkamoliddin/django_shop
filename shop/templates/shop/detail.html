@@ -15,20 +15,21 @@
                         </div>
                         <p class="lead">{{ product.description }}</p>
                         <div class="d-flex">
-                            <form>
+                            <form method="POST">
+                                {% csrf_token %}
                                 <div class="form-group">
                                     <h2>Place an order</h2>
                                 </div>
                                 <div class="form-group mb-3">
                                   <label for="formGroupExampleInput">Your name</label>
-                                  <input type="text" class="form-control"  placeholder="Your name">
+                                  <input type="text" name="name" class="form-control" placeholder="Your name">
                                 </div>
                                 <div class="form-group mb-3">
-                                  <label for="formGroupExampleInput2">Your phone</label>
-                                  <input type="text" class="form-control" placeholder="Your phone">
+                                  <label for="formGroupExampleInput2">Your email</label>
+                                  <input type="email" name="email" class="form-control" placeholder="Your email">
                                 </div>
                                   <div class="form-group mb-3">
-                                    <input type="text" class="btn btn-success" value="Send">
+                                    <button type="submit" class="btn btn-success">Submit</button>
                                   </div>
                               </form>
                         </div>
@@ -37,34 +38,27 @@
             </div>
         </section>
 
+        <!-- Comment section -->
         <div class="container mt-4 mb-4">
             <div class="row">
+                {% if comment_list %}
                 <div class="col-12">
                     <div class="text-center">
                         <h2>Latest comments</h2>
                     </div>
-
+                    {% for com in comment_list %}
                     <div class="media card p-4 mt-2">
                         <div class="media-body">
-                          <h3 class="mt-0">John Doe</h3>
-                          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                          <h3 class="mt-0">{{ com.name }}</h3>
+                                            {{ com.body }}
                         </div>
                     </div>
-
-                    <div class="media card p-4 mt-2">
-                        <div class="media-body">
-                          <h3 class="mt-0">John Doe</h3>
-                          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                        </div>
-                    </div>
-
-                    <div class="media card p-4 mt-2">
-                        <div class="media-body">
-                          <h3 class="mt-0">John Doe</h3>
-                          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
+            {% endif %}
+
+
+
 
                 <div class="col-8 offset-2 mt-5">
 
@@ -85,7 +79,7 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="formGroupExampleInput2">Your comment</label>
-                           <textarea name="comment" class="form-control" id="" cols="30" rows="10"></textarea>
+                           <textarea class="form-control" name="body" id="" cols="30" rows="10"></textarea>
                           </div>
                           <div class="form-group mb-3">
                             <input type="submit" class="btn btn-success" value="Send">
@@ -100,19 +94,19 @@
             <div class="container px-4 px-lg-5 mt-5">
                 <h2 class="fw-bolder mb-4">Related products</h2>
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                    {% for i in related_products %}
+                    {% for relate in related_product %}
                     <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
                             <img class="card-img-top"
-                            src="{{ i.image.url }}" alt="..." />
+                            src="{{ relate.image.url }}" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <h5 class="fw-bolder">{{ i.name }}</h5>
+                                    <h5 class="fw-bolder">{{ relate.name }}</h5>
                                     <!-- Product price-->
-                                    ${{ i.discounted_price }}
+                                    ${{ relate.discounted_price }}
                                 </div>
                             </div>
                             <!-- Product actions-->
